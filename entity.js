@@ -42,6 +42,7 @@ class Entity {
 	move(){
 		this.x += this.speedX;
 		this.y += this.speedY;
+		window.document.getElementById("log").innerText = "x: " + Game.player.x + " y: " + Game.player.y
 	}
 
 	//Определение необходимого вектора движения игрока
