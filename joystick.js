@@ -16,7 +16,7 @@ Joystick.prototype.update = function(mouseEvent){
 	this.speedX = this.mouseX - this.x;
 	this.speedY = this.mouseY - this.y;
 	let length = Math.sqrt(Math.pow(this.mouseX - this.x, 2) + Math.pow(this.mouseY - this.y, 2));
-	return [this.speedX, this.speedY, Math.min(1, length/this.radius)];
+	return [this.speedX, this.speedY, Math.min(1, length/(this.radius * Screen.sizeCoef))];
 }
 
 Joystick.prototype.draw = function(context) {
