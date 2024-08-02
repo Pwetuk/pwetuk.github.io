@@ -38,7 +38,6 @@ Game.start = function(){
 	Game.joystick = NaN;
 	Screen.background.src = "./testmap.jpg"; 
 	Screen.changeCanvasSize();
-	window.document.getElementById("log").innerText = "Started";
 }
 
 //Главная функция отрисовки

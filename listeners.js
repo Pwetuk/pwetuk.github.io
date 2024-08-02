@@ -1,4 +1,5 @@
 function enableJoystick(event) {
+	window.document.getElementById("log").innerText = "x: " + event.x + " y: " + event.y
 	Game.joystickEnabled = true;
 	Game.joystick = new Joystick(event.x, event.y, Screen.canvas.offsetLeft, Screen.canvas.offsetTop);
 }
@@ -50,15 +51,24 @@ window.addEventListener("mousemove", (event) => {
 
 
 Screen.canvas.addEventListener("touchstart", (event) => {
-	enableJoystick(event);
+	touch = event.touches[0];
+	enableJoystick({
+		x: touch.pageX - parseInt(Screen.canvas.style.marginTop.slice(0, -2)),
+		y: touch.pageY - parseInt(Screen.canvas.style.marginLeft.slice(0, -2)),
+	});
 });
 
 Screen.canvas.addEventListener("touchend", (event) => {
-	disableJoystick(event);
+	touch = event.touches[0];
+	disableJoystick(touch);
 });
 
 Screen.canvas.addEventListener("touchmove", (event) => {
-	moveJoystick(event);
+	touch = event.touches[0];
+	moveJoystick({
+		x: touch.pageX - parseInt(Screen.canvas.style.marginTop.slice(0, -2)),
+		y: touch.pageY - parseInt(Screen.canvas.style.marginLeft.slice(0, -2)),
+	});
 });
 
 window.oncontextmenu = function ()
