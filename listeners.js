@@ -54,8 +54,8 @@ window.addEventListener("mousemove", (event) => {
 Screen.canvas.addEventListener("touchstart", (event) => {
 	touch = event.touches[0];
 	enableJoystick({
-		x: touch.pageX,
-		y: touch.pageY,
+		x: touch.clientX,
+		y: touch.clientY,
 	});
 });
 
@@ -67,8 +67,8 @@ Screen.canvas.addEventListener("touchend", (event) => {
 Screen.canvas.addEventListener("touchmove", (event) => {
 	touch = event.touches[0];
 	moveJoystick({
-		x: touch.pageX - parseInt(Screen.canvas.style.marginTop.slice(0, -2)),
-		y: touch.pageY - parseInt(Screen.canvas.style.marginLeft.slice(0, -2)),
+		x: touch.clientX,
+		y: touch.clientY,
 	});
 });
 
