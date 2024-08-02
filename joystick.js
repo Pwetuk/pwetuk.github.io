@@ -21,19 +21,19 @@ Joystick.prototype.update = function(mouseEvent){
 
 Joystick.prototype.draw = function(context) {
 	let length = Math.sqrt(Math.pow(this.mouseX - this.x, 2) + Math.pow(this.mouseY - this.y, 2));
-	let drawX, drawY;
-	if(length >= this.radius){
-		drawX = (this.mouseX - this.x) * this.radius / length + this.x;
-		drawY = (this.mouseY - this.y) * this.radius / length + this.y;
+	let drawX, drawY, realRadius = this.radius * Screen.sizeCoef;
+	if(length >= realRadius){
+		drawX = (this.mouseX - this.x) * realRadius / length + this.x;
+		drawY = (this.mouseY - this.y) * realRadius / length + this.y;
 	}else{
 		drawX = this.mouseX;
 		drawY = this.mouseY;
 	}
 	context.beginPath();
-	context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+	context.arc(this.x, this.y, realRadius, 0, Math.PI * 2, false);
 	context.stroke();
 	context.beginPath();
-	context.arc(drawX, drawY, this.radius/2, 0, Math.PI * 2, false);
+	context.arc(drawX, drawY, realRadius/2, 0, Math.PI * 2, false);
 	context.stroke();
 
 }
