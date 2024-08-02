@@ -1,3 +1,19 @@
+function enableJoystick(event) {
+	Game.joystickEnabled = true;
+	Game.joystick = new Joystick(event.x, event.y, Screen.canvas.offsetLeft, Screen.canvas.offsetTop);
+}
+
+function disableJoystick(event) {
+	Game.joystickEnabled = false;
+}
+
+function moveJoystick(event) {
+	if(Game.joystickEnabled){
+		let tmp = Game.joystick.update(event);
+		Game.player.getSpeed(tmp[0], tmp[1], tmp[2]);
+	}
+}
+
 //Перехват нажатых кнопок
 addEventListener("keydown", (event) => {
 	keyStatuses.onKeyDown(event.code);
@@ -20,21 +36,30 @@ addEventListener("focus", () => {Game.pause = false;})
 
 Screen.canvas.addEventListener("mousedown", (event) => {
 	if(event.button == 0){
-		Game.joystickEnabled = true;
-		Game.joystick = new Joystick(event.x, event.y, Screen.canvas.offsetLeft, Screen.canvas.offsetTop);
+		enableJoystick(event);
 	}
 });
 
 window.addEventListener("mouseup", (event) => {
-	Game.joystickEnabled = false;
+	disableJoystick(event);
 })
 
 window.addEventListener("mousemove", (event) => {
-	if(Game.joystickEnabled){
-		let tmp = Game.joystick.update(event);
-		Game.player.getSpeed(tmp[0], tmp[1], tmp[2]);
-	}
+	moveJoystick(event);
 })
+
+
+Screen.canvas.addEventListener("touchstart", (event) => {
+	enableJoystick(event);
+});
+
+Screen.canvas.addEventListener("touchend", (event) => {
+	disableJoystick(event);
+});
+
+Screen.canvas.addEventListener("touchmove", (event) => {
+	moveJoystick(event);
+});
 
 window.oncontextmenu = function ()
 {
