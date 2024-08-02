@@ -1,5 +1,4 @@
 function enableJoystick(event) {
-	//window.document.getElementById("log").innerText = "x: " + event.x + " y: " + event.y
 	Game.joystickEnabled = true;
 	Game.joystick = new Joystick(event.x, event.y, Screen.canvas.offsetLeft, Screen.canvas.offsetTop);
 }
@@ -9,7 +8,6 @@ function disableJoystick(event) {
 }
 
 function moveJoystick(event) {
-	//window.document.getElementById("log").innerText = "x: " + event.x + " y: " + event.y
 	if(Game.joystickEnabled){
 		let tmp = Game.joystick.update(event);
 		Game.player.getSpeed(tmp[0], tmp[1], tmp[2]);
