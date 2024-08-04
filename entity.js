@@ -22,6 +22,8 @@ class Entity {
 			this.speedX = 0;
 			this.speedY = 0;
 		}
+		this.speedX *= Screen.sizeCoef;
+		this.speedY *= Screen.sizeCoef;
 	}
 
 	//Дефолтная функция отрисовки существа
