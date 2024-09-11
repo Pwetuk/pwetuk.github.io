@@ -1,76 +1,64 @@
 //Главный класс существ
 class Entity {
-	constructor(x, y, baseSpeed, speedCoef){
+	constructor(x, y, hitbox, color, baseSpeed) {
 		this.x = x;
 		this.y = y;
-		this.baseSpeed = baseSpeed;
-		this.speedCoef = speedCoef;
-		this.speedX = 1;
-		this.speedY = 1;
-		this.width = 32;
-		this.height = 32;
-		this.color = "rgb(255, 0, 0)";
+		this.hitbox = hitbox;
+		this.color = color;
+		this.speed = {
+			x: 1,
+			y: 1,
+			base: baseSpeed,
+			coefficient: baseSpeed
+		}
 	}
 
-	//Приведение скорости существа к единице(По факту за скорость существа отвечает только speedCoef)
-	normalizeSpeed(){
-		length = Math.sqrt(Math.pow(this.speedX, 2) + Math.pow(this.speedY, 2));
-		if(length != 0){
-			this.speedX = this.speedX * this.speedCoef / length
-			this.speedY = this.speedY * this.speedCoef / length
-		}else{
-			this.speedX = 0;
-			this.speedY = 0;
+
+	get velocity() {
+		let length = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.y, 2));
+		if(length == 0){
+			return {
+				x: 0,
+				y: 0
+			}
 		}
-		this.speedX *= Screen.sizeCoef;
-		this.speedY *= Screen.sizeCoef;
+		if(length < 1){
+			return {
+				x: this.speed.x * this.speed.coefficient,
+				y: this.speed.y * this.speed.coefficient
+			}
+		}
+		return {
+			x: this.speed.x * this.speed.coefficient / length,
+			y: this.speed.y * this.speed.coefficient / length
+		}
+	}
+
+	get position(){
+		return {
+			x: this.x,
+			y: this.y
+		}
+	}
+
+	get coordinates(){
+		return {
+			x: this.x - Game.player.position.x - this.hitbox.width + Screen.canvas.width/2,
+			y: this.y - Game.player.position.y - this.hitbox.height + Screen.canvas.height/2
+		}
 	}
 
 	//Дефолтная функция отрисовки существа
-	draw(context, playerX, playerY){
-		context.fillStyle = "rgb(0, 0, 0)";
-		context.fillRect(-playerX + this.x, -playerY + this.y, this.width * Screen.sizeCoef, this.height * Screen.sizeCoef);
-	}
-
-	//Изменение для управлением джойстиком
-	getSpeed(speedX, speedY, coef=1){
-		this.speedX = speedX;
-		this.speedY = speedY;
-		this.speedCoef = coef * this.baseSpeed;
-		this.normalizeSpeed();
+	draw(context) {
+		context.fillStyle = this.color;
+		context.fillRect(this.coordinates.x, this.coordinates.y, this.hitbox.width * 2, this.hitbox.height * 2);
 	}
 
 	//Стандартная функция перемещения существа
-	move(){
-		this.x += this.speedX;
-		this.y += this.speedY;
+	move() {
+		this.x += this.velocity.x;
+		this.y += this.velocity.y;
 		//window.document.getElementById("log").innerText = "x: " + Game.player.x + " y: " + Game.player.y
-	}
-
-	//Определение необходимого вектора движения игрока
-	playerCalculateMovement(){
-		this.speedCoef = this.baseSpeed;
-		this.speedX = this.speedY = 0;
-		if(keyStatuses.isDown("KeyA") || keyStatuses.isDown("ArrowLeft")){
-			this.speedX -= 1;
-		}
-		if(keyStatuses.isDown("KeyD") || keyStatuses.isDown("ArrowRight")){
-			this.speedX += 1;
-		}
-		if(keyStatuses.isDown("KeyS") || keyStatuses.isDown("ArrowDown")){
-			this.speedY += 1;
-		}
-		if(keyStatuses.isDown("KeyW") || keyStatuses.isDown("ArrowUp")){
-			this.speedY -= 1;
-		}
-		this.normalizeSpeed();
-	}
-
-	//Функция отрисовки игрока
-	drawPlayer(context){
-		context.fillStyle = Game.player.color;
-		context.fillRect((Screen.canvas.width - Game.player.width)/2,
-			(Screen.canvas.height - Game.player.height)/2, Game.player.width * Screen.sizeCoef, Game.player.height * Screen.sizeCoef);
 	}
 
 	//Изменить коэфициенты скоростей
