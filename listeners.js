@@ -61,21 +61,27 @@ window.addEventListener("mousemove", (event) => {
 
 
 Screen.canvas.addEventListener("touchstart", (event) => {
-	if(!Game.pause){
-		enableJoystick(Screen.getCanvasCoords(event.touches[0]));
+	touch = Screen.getCanvasCoords(event.touches[0]);
+	if(Game.pause){
+		PauseMenu.mouseDown(touch);
 	}
+	enableJoystick(touch);
 });
 
 Screen.canvas.addEventListener("touchend", (event) => {
-	if(Game.pause){
-		PauseMenu.mouseDown(Screen.getCanvasCoords(event.touches[0]));
-	}
-	disableJoystick(event);
+	disableJoystick(NaN);
 });
 
 Screen.canvas.addEventListener("touchmove", (event) => {
-	touch = event.touches[0];
-	moveJoystick(Screen.getCanvasCoords(touch));
+	touch = Screen.getCanvasCoords(event.touches[0]);
+	if(Game.pause){
+		PauseMenu.mouseDown(touch);
+	}else{
+		moveJoystick({
+			x: touch.x,
+			y: touch.y,
+		});
+	}
 });
 
 window.oncontextmenu = function() {

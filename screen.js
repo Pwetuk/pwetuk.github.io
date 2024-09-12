@@ -33,8 +33,8 @@ var Screen = {
 
 	getCanvasCoords: function(event){
 		let canvasX, canvasY;
-		canvasX = event.x - Screen.canvas.offsetLeft;
-		canvasY = event.y - Screen.canvas.offsetTop;
+		canvasX = event.clientX - Screen.canvas.offsetLeft;
+		canvasY = event.clientY - Screen.canvas.offsetTop;
 		canvasX = (canvasX / Screen.styleWidth) * Screen.canvas.width;
 		canvasY = (canvasY / Screen.styleHeight) * Screen.canvas.height;
 		event.x = canvasX;
