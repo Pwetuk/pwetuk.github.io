@@ -6,6 +6,15 @@ class Player extends Entity {
 		this.type = "player";
 		this.health = 100;
 		this.origColor = this.color;
+		this.texture = new Image();
+		this.texture.src = "https://lazyevaluation.ru/dominator/player.png";
+		this.revtexture = new Image();
+		this.revtexture.src = "https://lazyevaluation.ru/dominator/player2.png";
+		this.textureY = 18 + 64;
+		this.textureX = 20;
+		this.textureW = 23;
+		this.textureH = 28;
+		this.frames = 20;
 	}
 
 	moveUp = function() { this.speed.y -= 1; };
@@ -59,11 +68,6 @@ class Player extends Entity {
 		this.hitbox = new Rectangle(this.x, this.y, 16, 16);
 	}
 
-	draw(context) {
-		context.fillStyle = this.color;
-		context.fillRect(this.coordinates.x, this.coordinates.y, this.hitbox.width * 2, this.hitbox.height * 2);
-	}
-
 	checkCollisions(obj, time){
 		if(this.alreadyCollided.get(obj)){ return; }
 		switch(obj.type) {
@@ -77,4 +81,15 @@ class Player extends Entity {
 		super.checkCollisions(obj, time);
 	}
 
+
+	takeDamage(dmg){
+		super.takeDamage(dmg);
+		AudioPlayer.effects[0].play();
+	}
+
+	delete(){
+		super.delete();
+		AudioPlayer.effects[2].play();
+		Game.end();
+	}
 }

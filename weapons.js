@@ -12,9 +12,8 @@ class Weapon extends Entity{
 		this.type = "weapon";
 		this.timeFiring = 100;
 		this.fireCooldown = 100;
-		this.frame = 0;
-		this.frames = 20;
 		this.texture = new Image();
+		this.frames = 20;
 	}
 
 	draw(ctx){
@@ -24,8 +23,6 @@ class Weapon extends Entity{
 
 	update(time){
 		super.update(time);
-		this.frame += 1;
-		this.frame %= this.frames;
 	}
 }
 
@@ -48,8 +45,8 @@ class Weapon1 extends Weapon{
 		this.y = playerPosition().y;
 		this.playerCoordinates = playerCoordinates;
 		this.hitbox = new Circle(this.x, this.y, this.radius);
-		this.texture.src = "./resources/staticyellowweapons.png";
-		this.textureX = 224;
+		this.texture.src = "https://lazyevaluation.ru/dominator/staticyellowweapons.png";
+		this.textureX = 222;
 		this.textureY = 160;
 		this.textureW = 32;
 		this.textureH = 32;
@@ -109,7 +106,7 @@ class Weapon2 extends Weapon{
 		this.y = playerPosition().y;
 		this.playerCoordinates = playerCoordinates;
 		this.hitbox = NaN;
-		this.base = 12;
+		this.base = 5;
 	}
 
 	fire(time){
@@ -128,6 +125,10 @@ class Weapon2 extends Weapon{
 			Game.objects.add(projectile);
 			Game.objects.add(force);
 		}
+	}
+
+	draw(ctx){
+		super.draw(ctx);
 	}
 
 	update(time){
@@ -157,7 +158,8 @@ class Weapon2Projectile extends Weapon{
 		this.timeFiring = 200;
 		this.fireCooldown = 100;
 		this.frame = 0;
-		this.texture.src = "./resources/staticyellowweapons.png";
+		this.frames = 20;
+		this.texture.src = "https://lazyevaluation.ru/dominator/staticyellowweapons.png";
 		this.textureX = 352;
 		this.textureY = 256;
 		this.textureW = 32;
@@ -223,7 +225,7 @@ class Weapon3 extends Weapon{
 		this.lastUpdate = time;
 		this.width = 16;
 		this.height = 16;
-		this.texture.src = "./resources/staticyellowweapons.png";
+		this.texture.src = "https://lazyevaluation.ru/dominator/staticyellowweapons.png";
 		this.textureX = 384;
 		this.textureY = 32;
 		this.textureW = 32;

@@ -13,6 +13,14 @@ class Entity {
 		}
 		this.type = "entity";
 		this.alreadyCollided = new Map();
+		this.frame = 0;
+		this.frames = 1;
+		this.texture = NaN;
+		this.revtexture = NaN;
+		this.textureX;
+		this.textureY;
+		this.textureW;
+		this.textureH;
 	}
 
 	isColliding(time) {
@@ -72,15 +80,26 @@ class Entity {
 
 	//Дефолтная функция отрисовки существа
 	draw(context) {
+		if(this.texture){
+			if(this.speed.x >= 0){
+				context.drawImage(this.texture, this.textureX + 64 * Math.floor(this.frame / (this.frames/4)), this.textureY, this.textureW, this.textureH,
+					this.coordinates.x, this.coordinates.y, this.hitbox.width*2, this.hitbox.height*2);
+			}else{
+				context.drawImage(this.revtexture, this.revtexture.width - (this.textureX + 64 * Math.floor(this.frame / (this.frames/4)) + this.textureW), this.textureY, this.textureW, this.textureH,
+					this.coordinates.x, this.coordinates.y, this.hitbox.width*2, this.hitbox.height*2);
+			}
+			return;
+		}
 		context.fillStyle = this.color;
 		if(this.hitbox instanceof Circle){
 			context.beginPath();
 			context.arc(this.coordinates.x, this.coordinates.y, this.hitbox.r, 0, 2 * Math.PI, false);
 			context.fill();
 		}else{
-			context.fillRect(this.coordinates.x, this.coordinates.y, this.hitbox.width * 2, this.hitbox.height * 2);
+			context.strokeRect(this.coordinates.x, this.coordinates.y, this.hitbox.width * 2, this.hitbox.height * 2);
 		}
 	}
+
 
 	//Стандартная функция перемещения существа
 	move() {
@@ -95,6 +114,8 @@ class Entity {
 	}
 
 	update(time){
+		this.frame += 1;
+		this.frame %= this.frames;
 		this.isColliding(time);
 		this.removeFromChecked(time);
 		this.despawn();

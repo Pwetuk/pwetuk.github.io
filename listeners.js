@@ -17,11 +17,17 @@ function moveJoystick(event) {
 //Перехват нажатых кнопок
 addEventListener("keydown", (event) => {
 	keyStatuses.onKeyDown(event.code);
-	if(event.code == "Escape"){
+	if(event.code == "Escape" && Game.status == "run"){
 		Game.setOnPause();
 	}
-	if(event.code == "Enter"){
+	if(event.code == "Enter" && Game.status == "pause"){
 		Game.resume();
+	}
+	if(event.code == "KeyG"){
+		Game.player.takeDamage(1000);
+	}
+	if(event.code == "KeyR" && Game.dead){
+		DeathScreen.restart();
 	}
 });
 
@@ -33,22 +39,33 @@ addEventListener("keyup", (event) => {
 
 var timeBlured = 0;
 //Проверка на то, в фокусе ли окно, если не
-addEventListener("blur", () => {Game.setOnPause()});
+addEventListener("blur", () => { if(Game.status == "run") {Game.setOnPause()}});
 
 Screen.canvas.addEventListener("mousedown", (event) => {
 	let pos = Screen.getCanvasCoords(event);
 	if(event.button == 0){
 		enableJoystick(pos);
 	}
-	if(Game.pause){
-		PauseMenu.mouseDown(pos);
+	switch(Game.status){
+		case "dead":
+			DeathScreen.click(pos);
+			break;
+		case "pause":
+			PauseMenu.mouseDown(pos);
+			break;
+		case "run":
+			PauseButton.click(pos);
+		case "start":
+			StartScreen.click(pos);		
 	}
 });
 
 window.addEventListener("mouseup", (event) => {
 	let pos = Screen.getCanvasCoords(event);
 	disableJoystick(pos);
-	VolumeAdjuster.release(pos);
+	if(Game.status == "pause"){
+		PauseMenu.release();
+	}
 })
 
 window.addEventListener("mousemove", (event) => {
@@ -62,15 +79,34 @@ window.addEventListener("mousemove", (event) => {
 
 Screen.canvas.addEventListener("touchstart", (event) => {
 	touch = Screen.getCanvasCoords(event.touches[0]);
-	if(Game.pause){
-		PauseMenu.mouseDown(touch);
+	switch(Game.status){
+		case "dead":
+			DeathScreen.click(pos);
+			break;
+		case "pause":
+			PauseMenu.mouseDown(pos);
+			break;
+		case "run":
+			PauseButton.click(pos);
+		case "start":
+			StartScreen.click(pos);		
 	}
 	enableJoystick(touch);
 });
 
 Screen.canvas.addEventListener("touchend", (event) => {
 	disableJoystick(NaN);
+	if(Game.status == "pause"){
+		PauseMenu.release();
+	}
 });
+
+Screen.canvas.addEventListener("touchcancel", (event) => {
+	disableJoystick(NaN);
+	if(Game.status == "pause"){
+		PauseMenu.release();
+	}
+})
 
 Screen.canvas.addEventListener("touchmove", (event) => {
 	touch = Screen.getCanvasCoords(event.touches[0]);

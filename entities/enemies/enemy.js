@@ -76,4 +76,9 @@ class Enemy extends Entity {
 		Enemy.count -= 1;
 		super.delete();
 	}
+
+	takeDamage(dmg){
+		super.takeDamage(dmg);
+		AudioPlayer.effects[1].play();
+	}
 }

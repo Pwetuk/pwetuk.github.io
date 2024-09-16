@@ -2,85 +2,147 @@ var PauseMenu = {
 	text: NaN,
 	init: function() {
 		text = new Image();
-		text.src = "./resources/pause.png";
+		text.src = "https://lazyevaluation.ru/dominator/pause.png";
 	},
 	draw: function(ctx) {
-		ctx.drawImage(text, Screen.canvas.width/2 - text.width/2, Screen.canvas.height/10, text.width, text.height);
-		VolumeAdjuster.draw(ctx);
-		ctx.fillStyle = "black";
-		ctx.fillRect(Screen.canvas.width/2 - 300, Screen.canvas.height * 0.75, 600, 100);
+		ctx.drawImage(text, Screen.canvas.width/2 - text.width/2, Screen.canvas.height/9, text.width, text.height);
+		PauseMenu.MusicVolumeAdjuster.draw(ctx);
+		PauseMenu.EffectsVolumeAdjuster.draw(ctx);
+		ctx.fillStyle = "blue";
+		let w = Screen.canvas.width/2;
+		let h = 7 * Screen.canvas.height / 9
+		ctx.beginPath();
+		ctx.arc(w - 275, h - 12, 25, Math.PI, Math.PI * 1.5, false);
+		ctx.arc(w + 275, h - 12, 25, Math.PI * 1.5, 0, false);
+		ctx.arc(w + 275, h + 12, 25, 0, Math.PI * 0.5, false);
+		ctx.arc(w - 275, h + 12, 25, Math.PI * 0.5, Math.PI, false);
+		ctx.closePath();
+		ctx.fill();
+		ctx.font = "48px serif"
+		ctx.textAlign = "center"
+		ctx.fillStyle = "white"
+		ctx.fillText("ПРОДОЛЖИТЬ", w, h + 12);
+
 	},
 	mouseDown: function(event){
-		VolumeAdjuster.moveUpdate(event);
-		if(Screen.canvas.width/2 - 300 < event.x - Screen.canvas.offsetLeft && 
-			event.x - Screen.canvas.offsetLeft < Screen.canvas.width/2 + 300 &&
-			Screen.canvas.height*0.75 < event.y - Screen.canvas.offsetTop &&
-			event.y - Screen.canvas.offsetTop < Screen.canvas.height * 0.75 + 100){
+		PauseMenu.MusicVolumeAdjuster.moveUpdate(event);
+		PauseMenu.EffectsVolumeAdjuster.moveUpdate(event);
+		if(Screen.canvas.width/2 - 300 < event.x && 
+			event.x < Screen.canvas.width/2 + 300 &&
+			Screen.canvas.height*7/9 - 50 < event.y &&
+			event.y < Screen.canvas.height * 7/9 + 50){
 			Game.resume();
 		}
+	},
+	prepare: function() {
+		PauseMenu.MusicVolumeAdjuster = new MusicVolumeAdjuster();
+		PauseMenu.EffectsVolumeAdjuster = new EffectsVolumeAdjuster();
+	},
+	release: function(){
+		PauseMenu.MusicVolumeAdjuster.release();
+		PauseMenu.EffectsVolumeAdjuster.release();
 	}
 }
 
-class VolumeAdjuster{
-	static baseWidth = 400;
-	static baseHeight = 50;
-	static volume;
-	static widthCoef = 2/40;
-	static heightCoef = 1/3;
-	static wasClicked = false;
+class MusicVolumeAdjuster{
+	constructor(){
+		this.baseWidth = 400;
+		this.baseHeight = 50;
+		this.volume;
+		this.widthCoef = 2/40;
+		this.heightCoef = 1/3;
+		this.canvasCoef = 3/9;
+		this.wasClicked = false;
+	}
+	
 
-	static update(){
-		VolumeAdjuster.volume = Game.music.volume;
+	update(){
+		this.volume = AudioPlayer.getMusicVol();
 	}
 
-	static draw(ctx){
-		VolumeAdjuster.update();
-		ctx.fillStyle = "black";
-		ctx.fillRect(Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2, Screen.canvas.height*0.5, VolumeAdjuster.baseWidth, VolumeAdjuster.baseHeight);
-		ctx.fillStyle = "rgb(255, 0, 0)";
-		ctx.fillRect(Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2 + VolumeAdjuster.volume * VolumeAdjuster.baseWidth - VolumeAdjuster.baseWidth * VolumeAdjuster.widthCoef,
-		Screen.canvas.height*0.5 - VolumeAdjuster.baseHeight * VolumeAdjuster.heightCoef, VolumeAdjuster.baseWidth*VolumeAdjuster.widthCoef, VolumeAdjuster.baseHeight * (1 + 2 * VolumeAdjuster.heightCoef));
+	draw(ctx){
+		this.update();
+		ctx.fillStyle = "blue";
+		ctx.fillRect(Screen.canvas.width/2 - this.baseWidth/2, Screen.canvas.height*this.canvasCoef, this.baseWidth, this.baseHeight);
+		ctx.fillStyle = "red";
+		ctx.beginPath()
+		ctx.fillRect(Screen.canvas.width/2 - this.baseWidth/2 + this.volume * this.baseWidth - this.baseWidth * this.widthCoef,
+					Screen.canvas.height*this.canvasCoef - this.baseHeight * this.heightCoef,
+					this.baseWidth*this.widthCoef, 
+					this.baseHeight * (1 + 2 * this.heightCoef));
 	}
 
-	static mouseUpdate(canvasX, canvasY){
+	mouseUpdate(canvasX, canvasY){
 		var xPos;
-		if(Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2 < canvasX){
-			xPos = Math.min(canvasX, Screen.canvas.width/2 + VolumeAdjuster.baseWidth/2);
+		if(Screen.canvas.width/2 - this.baseWidth/2 < canvasX){
+			xPos = Math.min(canvasX, Screen.canvas.width/2 + this.baseWidth/2);
 		}else{
-			xPos = Math.max(canvasX, Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2);
+			xPos = Math.max(canvasX, Screen.canvas.width/2 - this.baseWidth/2);
 		}
-		var result = xPos - (Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2);
+		var result = xPos - (Screen.canvas.width/2 - this.baseWidth/2);
 		return result;
 	}
 
-	static mouseDown(canvasX, canvasY){
-		if(Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2 < canvasX &&
-			canvasX < Screen.canvas.width/2 - VolumeAdjuster.baseWidth/2 + VolumeAdjuster.baseWidth &&
-			Screen.canvas.height*0.5 < canvasY &&
-			canvasY < Screen.canvas.height*0.5 + VolumeAdjuster.baseHeight){
-			VolumeAdjuster.wasClicked = true;
-			return (canvasX - Screen.canvas.width/2 + VolumeAdjuster.baseWidth/2);
+	mouseDown(canvasX, canvasY){
+		if(Screen.canvas.width/2 - this.baseWidth/2 < canvasX &&
+			canvasX < Screen.canvas.width/2 - this.baseWidth/2 + this.baseWidth &&
+			Screen.canvas.height*this.canvasCoef < canvasY &&
+			canvasY < Screen.canvas.height*this.canvasCoef + this.baseHeight){
+			this.wasClicked = true;
+			return (canvasX - Screen.canvas.width/2 + this.baseWidth/2);
 		}
-		return VolumeAdjuster.volume * VolumeAdjuster.baseWidth;
+		return this.volume * this.baseWidth;
 	}
 
-	static moveUpdate(event){
+	moveUpdate(event){
 		let canvasX = event.x, canvasY = event.y, vol;
-		if(!VolumeAdjuster.wasClicked){
- 			vol = VolumeAdjuster.mouseDown(canvasX, canvasY);
- 		}else if(VolumeAdjuster.wasClicked){
- 			vol = VolumeAdjuster.mouseUpdate(canvasX, canvasY);
+		if(!this.wasClicked){
+ 			vol = this.mouseDown(canvasX, canvasY);
+ 		}else if(this.wasClicked){
+ 			vol = this.mouseUpdate(canvasX, canvasY);
  		}
-		vol = vol / (VolumeAdjuster.baseWidth);
+		vol = vol / (this.baseWidth);
 		if(vol <= 0){
 			vol = 0;
 		}else if(vol >= 1){
 			vol = 1;
 		}
-		Game.changeVolume(vol);
+		this.passToAudioPlayer(vol);
 	}
 
-	static release(event){
-		VolumeAdjuster.wasClicked = false;
+	passToAudioPlayer(vol){
+		AudioPlayer.setMusicVol(vol);
+	}
+
+	release(event){
+		this.wasClicked = false;
+	}
+}
+
+class EffectsVolumeAdjuster extends MusicVolumeAdjuster{
+	constructor(){
+		super();
+		this.canvasCoef = 5/9;
+	}
+	
+	update(){
+		this.volume = AudioPlayer.getEffectsVol();
+	}
+
+	passToAudioPlayer(vol){
+		AudioPlayer.setEffectsVol(vol);
+	}
+}
+
+var PauseButton = {
+	img: new Image(),
+	draw: function(ctx){
+		PauseButton.img.src = "https://lazyevaluation.ru/dominator/pauseBtn.png";
+		ctx.drawImage(PauseButton.img, Screen.canvas.width - 100, 25, 75, 75);
+	},
+	click: function(click){
+		if(Screen.canvas.width - 100 < click.x && click.x <  Screen.canvas.width - 25 && 25 < click.y && click.y < 100){
+			Game.setOnPause();
+		}
 	}
 }
