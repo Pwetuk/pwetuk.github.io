@@ -87,12 +87,11 @@ Screen.canvas.addEventListener("touchstart", (event) => {
 			break;
 		case "run":
 			PauseButton.click(pos);
-			if(Game.status == "run"){
-				enableJoystick(pos);
-			}
+			enableJoystick(pos);
 			break;
 		case "start":
-			StartScreen.click(pos);		
+			StartScreen.click(pos);
+			break;
 	}
 });
 
@@ -114,7 +113,7 @@ Screen.canvas.addEventListener("touchmove", (event) => {
 	touch = Screen.getCanvasCoords(event.touches[0]);
 	if(Game.pause){
 		PauseMenu.mouseDown(touch);
-	}else{
+	}else if(Game.status == "run"){
 		moveJoystick({
 			x: touch.x,
 			y: touch.y,
