@@ -42,22 +42,25 @@ var timeBlured = 0;
 addEventListener("blur", () => { if(Game.status == "run") {Game.setOnPause()}});
 
 Screen.canvas.addEventListener("mousedown", (event) => {
-	let pos = Screen.getCanvasCoords(event);
-	if(event.button == 0){
-		enableJoystick(pos);
-	}
-	switch(Game.status){
-		case "dead":
-			DeathScreen.click(pos);
-			break;
-		case "pause":
-			PauseMenu.mouseDown(pos);
-			break;
-		case "run":
-			PauseButton.click(pos);
-		case "start":
-			StartScreen.click(pos);		
-	}
+		let pos = Screen.getCanvasCoords(event);
+
+		if(event.button == 0){
+			enableJoystick(pos);
+		}
+		switch(Game.status){
+			case "dead":
+				DeathScreen.click(pos);
+				break;
+			case "pause":
+				PauseMenu.mouseDown(pos);
+				break
+			case "run":
+				PauseButton.click(pos);
+				break;
+			case "start":
+				StartScreen.click(pos);		
+				break
+		}
 });
 
 window.addEventListener("mouseup", (event) => {
@@ -65,14 +68,15 @@ window.addEventListener("mouseup", (event) => {
 	if(Game.status == "pause"){
 		PauseMenu.release();
 	}
+	disableJoystick(NaN)
 })
 
 window.addEventListener("mousemove", (event) => {
-	let pos = Screen.getCanvasCoords(event);
-	moveJoystick(pos);
-	if(Game.pause && event.buttons == 1){
-		PauseMenu.mouseDown(pos);
-	}
+		let pos = Screen.getCanvasCoords(event);
+		moveJoystick(pos);
+		if(Game.pause && event.buttons == 1){
+			PauseMenu.mouseDown(pos);
+		}
 })
 
 
@@ -96,18 +100,13 @@ Screen.canvas.addEventListener("touchstart", (event) => {
 });
 
 Screen.canvas.addEventListener("touchend", (event) => {
+	console.log("Here");
 	disableJoystick(NaN);
+	console.log(Game.joystick)
 	if(Game.status == "pause"){
 		PauseMenu.release();
 	}
 });
-
-Screen.canvas.addEventListener("touchcancel", (event) => {
-	disableJoystick(NaN);
-	if(Game.status == "pause"){
-		PauseMenu.release();
-	}
-})
 
 Screen.canvas.addEventListener("touchmove", (event) => {
 	touch = Screen.getCanvasCoords(event.touches[0]);
