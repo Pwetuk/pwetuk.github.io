@@ -62,7 +62,6 @@ Screen.canvas.addEventListener("mousedown", (event) => {
 
 window.addEventListener("mouseup", (event) => {
 	let pos = Screen.getCanvasCoords(event);
-	disableJoystick(pos);
 	if(Game.status == "pause"){
 		PauseMenu.release();
 	}
@@ -78,7 +77,7 @@ window.addEventListener("mousemove", (event) => {
 
 
 Screen.canvas.addEventListener("touchstart", (event) => {
-	touch = Screen.getCanvasCoords(event.touches[0]);
+	let pos = Screen.getCanvasCoords(event.touches[0]);
 	switch(Game.status){
 		case "dead":
 			DeathScreen.click(pos);
@@ -88,10 +87,13 @@ Screen.canvas.addEventListener("touchstart", (event) => {
 			break;
 		case "run":
 			PauseButton.click(pos);
+			if(Game.status == "run"){
+				enableJoystick(pos);
+			}
+			break;
 		case "start":
 			StartScreen.click(pos);		
 	}
-	enableJoystick(touch);
 });
 
 Screen.canvas.addEventListener("touchend", (event) => {
